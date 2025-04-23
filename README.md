@@ -2,7 +2,7 @@
 
 Hello everyone! 👋
 
-I’m **Muhammed Mujthaba KK**, a passionate **Flutter Developer** from **Kerala, India**. I specialize in building high-performance, cross-platform mobile applications using **Flutter & Dart**, with a strong focus on clean architecture, scalability, and user experience.
+I’m **Rashid V**, a passionate **Flutter Developer** from **Kerala, India**. I specialize in building high-performance, cross-platform mobile applications using **Flutter & Dart**, with a strong focus on clean architecture, scalability, and user experience.
 
 ## Tech Stack & Skills
 
@@ -50,10 +50,10 @@ I’m **Muhammed Mujthaba KK**, a passionate **Flutter Developer** from **Kerala
 
 ## 📞 Contact Me
 
-📧 **Email:** [mujthabakk9@gmail.com](mailto:mujthabakk9@gmail.com)  
-📞 **Phone:** +91 8113853193  
-🔗 **LinkedIn:** [linkedin.com/in/mujthaba-kk](#)  
-🔗 **GitHub:** [github.com/mujthaba-kk](#)
+📧 **Email:** [rashidrashi0004321@gmail.com](mailto:rashidrashi0004321@gmail.com)  
+📞 **Phone:** +91 8547396351  
+🔗 **LinkedIn:** [https://www.linkedin.com/in/rashidv-flutter-developer/](#)  
+🔗 **GitHub:** [https://github.com/rashid-flutter](#)
 
 Feel free to explore my work and reach out! 🚀
-# portfolio
+

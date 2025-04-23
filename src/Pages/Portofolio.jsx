@@ -2,7 +2,6 @@ import React, { useEffect, useState, useCallback } from "react";
 import { db, collection } from "../firebase";
 import { getDocs } from "firebase/firestore";
 import PropTypes from "prop-types";
-import SwipeableViews from "react-swipeable-views";
 import { useTheme } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
 import Tabs from "@mui/material/Tabs";
@@ -16,32 +15,15 @@ import "aos/dist/aos.css";
 import Certificate from "../components/Certificate";
 import { Code, Award, Boxes } from "lucide-react";
 
-// Separate ShowMore/ShowLess button component
+// Toggle button component
 const ToggleButton = ({ onClick, isShowingMore }) => (
   <button
     onClick={onClick}
     className="
-      px-3 py-1.5
-      text-slate-300 
-      hover:text-white 
-      text-sm 
-      font-medium 
-      transition-all 
-      duration-300 
-      ease-in-out
-      flex 
-      items-center 
-      gap-2
-      bg-white/5 
-      hover:bg-white/10
-      rounded-md
-      border 
-      border-white/10
-      hover:border-white/20
-      backdrop-blur-sm
-      group
-      relative
-      overflow-hidden
+      px-3 py-1.5 text-slate-300 hover:text-white text-sm font-medium transition-all 
+      duration-300 ease-in-out flex items-center gap-2 bg-white/5 hover:bg-white/10 
+      rounded-md border border-white/10 hover:border-white/20 backdrop-blur-sm group 
+      relative overflow-hidden
     "
   >
     <span className="relative z-10 flex items-center gap-2">
@@ -57,8 +39,7 @@ const ToggleButton = ({ onClick, isShowingMore }) => (
         strokeLinecap="round"
         strokeLinejoin="round"
         className={`
-          transition-transform 
-          duration-300 
+          transition-transform duration-300 
           ${isShowingMore ? "group-hover:-translate-y-0.5" : "group-hover:translate-y-0.5"}
         `}
       >
@@ -113,7 +94,6 @@ const techStacks = [
   { icon: "javascript.svg", language: "JavaScript" },
   { icon: "reactjs.svg", language: "ReactJS" },
   { icon: "nodejs.svg", language: "Node JS" },
-  
 ];
 
 export default function FullWidthTabs() {
@@ -127,10 +107,7 @@ export default function FullWidthTabs() {
   const initialItems = isMobile ? 4 : 6;
 
   useEffect(() => {
-    // Initialize AOS once
-    AOS.init({
-      once: false, // This will make animations occur only once
-    });
+    AOS.init({ once: false });
   }, []);
 
   const fetchData = useCallback(async () => {
@@ -154,7 +131,6 @@ export default function FullWidthTabs() {
       setProjects(projectData);
       setCertificates(certificateData);
 
-      // Store in localStorage
       localStorage.setItem("projects", JSON.stringify(projectData));
       localStorage.setItem("certificates", JSON.stringify(certificateData));
     } catch (error) {
@@ -171,10 +147,10 @@ export default function FullWidthTabs() {
   };
 
   const toggleShowMore = useCallback((type) => {
-    if (type === 'projects') {
-      setShowAllProjects(prev => !prev);
+    if (type === "projects") {
+      setShowAllProjects((prev) => !prev);
     } else {
-      setShowAllCertificates(prev => !prev);
+      setShowAllCertificates((prev) => !prev);
     }
   }, []);
 
@@ -183,7 +159,6 @@ export default function FullWidthTabs() {
 
   return (
     <div className="md:px-[10%] px-[5%] w-full sm:mt-0 mt-[3rem] bg-[#030014] overflow-hidden" id="Portofolio">
-      {/* Header section - unchanged */}
       <div className="text-center pb-10" data-aos="fade-up" data-aos-duration="1000">
         <h2 className="inline-block text-3xl md:text-5xl font-bold text-center mx-auto text-transparent bg-clip-text bg-gradient-to-r from-[#6366f1] to-[#a855f7]">
           <span style={{
@@ -203,7 +178,6 @@ export default function FullWidthTabs() {
       </div>
 
       <Box sx={{ width: "100%" }}>
-        {/* AppBar and Tabs section - unchanged */}
         <AppBar
           position="static"
           elevation={0}
@@ -227,7 +201,6 @@ export default function FullWidthTabs() {
           }}
           className="md:px-4"
         >
-          {/* Tabs remain unchanged */}
           <Tabs
             value={value}
             onChange={handleChange}
@@ -235,14 +208,13 @@ export default function FullWidthTabs() {
             indicatorColor="secondary"
             variant="fullWidth"
             sx={{
-              // Existing styles remain unchanged
               minHeight: "70px",
               "& .MuiTab-root": {
                 fontSize: { xs: "0.9rem", md: "1rem" },
                 fontWeight: "600",
                 color: "#94a3b8",
                 textTransform: "none",
-                transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+                transition: "all 0.4s",
                 padding: "20px 0",
                 zIndex: 1,
                 margin: "8px",
@@ -272,29 +244,13 @@ export default function FullWidthTabs() {
               },
             }}
           >
-            <Tab
-              icon={<Code className="mb-2 w-5 h-5 transition-all duration-300" />}
-              label="Projects"
-              {...a11yProps(0)}
-            />
-            <Tab
-              icon={<Award className="mb-2 w-5 h-5 transition-all duration-300" />}
-              label="Certificates"
-              {...a11yProps(1)}
-            />
-            <Tab
-              icon={<Boxes className="mb-2 w-5 h-5 transition-all duration-300" />}
-              label="Tech Stack"
-              {...a11yProps(2)}
-            />
+            <Tab icon={<Code className="mb-2 w-5 h-5 transition-all duration-300" />} label="Projects" {...a11yProps(0)} />
+            <Tab icon={<Award className="mb-2 w-5 h-5 transition-all duration-300" />} label="Certificates" {...a11yProps(1)} />
+            <Tab icon={<Boxes className="mb-2 w-5 h-5 transition-all duration-300" />} label="Tech Stack" {...a11yProps(2)} />
           </Tabs>
         </AppBar>
 
-        <SwipeableViews
-          axis={theme.direction === "rtl" ? "x-reverse" : "x"}
-          index={value}
-          onChangeIndex={setValue}
-        >
+        {value === 0 && (
           <TabPanel value={value} index={0} dir={theme.direction}>
             <div className="container mx-auto flex justify-center items-center overflow-hidden">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-3 gap-5">
@@ -302,18 +258,9 @@ export default function FullWidthTabs() {
                   <div
                     key={project.id || index}
                     data-aos={index % 3 === 0 ? "fade-up-right" : index % 3 === 1 ? "fade-up" : "fade-up-left"}
-                    data-aos-duration={index % 3 === 0 ? "1000" : index % 3 === 1 ? "1200" : "1000"}
+                    data-aos-duration={index % 3 === 1 ? "1200" : "1000"}
                   >
-                    <CardProject
-                      Img={project.Img}
-                      Title={project.Title}
-                      Description={project.Description}
-                      Link={project.Link}
-                      WebLink={project.Link}
-                      AppStoreLink={project.AppStoreLink}
-                      PlayStoreLink={project.PlayStoreLink}
-                      id={project.id}
-                    />
+                    <CardProject {...project} />
                   </div>
                 ))}
               </div>
@@ -321,13 +268,15 @@ export default function FullWidthTabs() {
             {projects.length > initialItems && (
               <div className="mt-6 w-full flex justify-start">
                 <ToggleButton
-                  onClick={() => toggleShowMore('projects')}
+                  onClick={() => toggleShowMore("projects")}
                   isShowingMore={showAllProjects}
                 />
               </div>
             )}
           </TabPanel>
+        )}
 
+        {value === 1 && (
           <TabPanel value={value} index={1} dir={theme.direction}>
             <div className="container mx-auto flex justify-center items-center overflow-hidden">
               <div className="grid grid-cols-1 md:grid-cols-3 md:gap-5 gap-4">
@@ -335,7 +284,7 @@ export default function FullWidthTabs() {
                   <div
                     key={index}
                     data-aos={index % 3 === 0 ? "fade-up-right" : index % 3 === 1 ? "fade-up" : "fade-up-left"}
-                    data-aos-duration={index % 3 === 0 ? "1000" : index % 3 === 1 ? "1200" : "1000"}
+                    data-aos-duration={index % 3 === 1 ? "1200" : "1000"}
                   >
                     <Certificate ImgSertif={certificate.Img} />
                   </div>
@@ -345,13 +294,15 @@ export default function FullWidthTabs() {
             {certificates.length > initialItems && (
               <div className="mt-6 w-full flex justify-start">
                 <ToggleButton
-                  onClick={() => toggleShowMore('certificates')}
+                  onClick={() => toggleShowMore("certificates")}
                   isShowingMore={showAllCertificates}
                 />
               </div>
             )}
           </TabPanel>
+        )}
 
+        {value === 2 && (
           <TabPanel value={value} index={2} dir={theme.direction}>
             <div className="container mx-auto flex justify-center items-center overflow-hidden pb-[5%]">
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 lg:gap-8 gap-5">
@@ -359,7 +310,7 @@ export default function FullWidthTabs() {
                   <div
                     key={index}
                     data-aos={index % 3 === 0 ? "fade-up-right" : index % 3 === 1 ? "fade-up" : "fade-up-left"}
-                    data-aos-duration={index % 3 === 0 ? "1000" : index % 3 === 1 ? "1200" : "1000"}
+                    data-aos-duration={index % 3 === 1 ? "1200" : "1000"}
                   >
                     <TechStackIcon TechStackIcon={stack.icon} Language={stack.language} />
                   </div>
@@ -367,7 +318,7 @@ export default function FullWidthTabs() {
               </div>
             </div>
           </TabPanel>
-        </SwipeableViews>
+        )}
       </Box>
     </div>
   );
