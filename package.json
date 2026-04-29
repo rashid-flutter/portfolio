@@ -1,7 +1,6 @@
 {
   "name": "portofolio-v5",
   "private": true,
-  "homepage": "https://rashid-flutter.github.io/portfolio/",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
