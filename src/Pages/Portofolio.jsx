@@ -14,6 +14,9 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import Certificate from "../components/Certificate";
 import { Code, Award, Boxes } from "lucide-react";
+import projectData from "../project.json";
+import certificateData from "../certificate.json";
+
 
 // Toggle button component
 const ToggleButton = ({ onClick, isShowingMore }) => (
@@ -110,49 +113,76 @@ export default function FullWidthTabs() {
     AOS.init({ once: false });
   }, []);
 
-  const fetchData = useCallback(async () => {
-    try {
-      const projectCollection = collection(db, "projects");
-      const certificateCollection = collection(db, "certificates");
+  useEffect(() => {
+  setProjects(
+    projectData.projects.map((project, index) => ({
+      id: index,
+      ...project,
 
-      const [projectSnapshot, certificateSnapshot] = await Promise.all([
-        getDocs(projectCollection),
-        getDocs(certificateCollection),
-      ]);
+      Title: project.name,
+      Description: project.description,
 
-      const projectData = projectSnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-        TechStack: doc.data().TechStack || [],
-      }));
+      Img: project.image,
 
-      const certificateData = certificateSnapshot.docs.map((doc) => doc.data());
+      Github: project.github,
 
-      setProjects(projectData);
-      setCertificates(certificateData);
+      Link: project.link,
 
-      localStorage.setItem("projects", JSON.stringify(projectData));
-      localStorage.setItem("certificates", JSON.stringify(certificateData));
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  }, []);
+      PlayStoreLink: project.playStoreLink,
+
+      AppStoreLink: project.appStoreLink,
+
+      Features: project.features || [],
+
+      TechStack: project.techStack || [],
+    }))
+  );
+}, []);
+   // CERTIFICATES
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
 
-  const handleChange = (event, newValue) => {
+    setCertificates(
+      certificateData.certificates.map(
+        (certificate) => ({
+          ...certificate,
+
+          Title: certificate.name,
+
+          Img: certificate.imageUrl,
+        })
+      )
+    );
+
+  }, []);
+
+  const handleChange = (
+    event,
+    newValue
+  ) => {
     setValue(newValue);
   };
 
-  const toggleShowMore = useCallback((type) => {
-    if (type === "projects") {
-      setShowAllProjects((prev) => !prev);
-    } else {
-      setShowAllCertificates((prev) => !prev);
-    }
-  }, []);
+  const toggleShowMore = useCallback(
+    (type) => {
+
+      if (type === "projects") {
+
+        setShowAllProjects(
+          (prev) => !prev
+        );
+
+      } else {
+
+        setShowAllCertificates(
+          (prev) => !prev
+        );
+
+      }
+
+    },
+    []
+  );
 
   const displayedProjects = showAllProjects ? projects : projects.slice(0, initialItems);
   const displayedCertificates = showAllCertificates ? certificates : certificates.slice(0, initialItems);

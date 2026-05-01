@@ -5,6 +5,7 @@ import {
   ChevronRight, Layers, Layout, Globe, Package, Cpu, Code,
 } from "lucide-react";
 import Swal from 'sweetalert2';
+import projectData from "../project.json";
 
 const TECH_ICONS = {
   React: Globe,
@@ -98,23 +99,31 @@ const ProjectDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [project, setProject] = useState(null);
-  const [isImageLoaded, setIsImageLoaded] = useState(false);
+  // const [isImageLoaded, setIsImageLoaded] = useState(false);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
-    const storedProjects = JSON.parse(localStorage.getItem("projects")) || [];
-    const selectedProject = storedProjects.find((p) => String(p.id) === id);
-    
-    if (selectedProject) {
-      const enhancedProject = {
-        ...selectedProject,
-        Features: selectedProject.Features || [],
-        TechStack: selectedProject.TechStack || [],
-        Github: selectedProject.Github || 'https://github.com/rashid-flutter',
-      };
-      setProject(enhancedProject);
-    }
-  }, [id]);
+  window.scrollTo(0, 0);
+
+  const selectedProject = projectData.projects.find(
+  (p) => p.id === id
+);
+  if (selectedProject) {
+    const enhancedProject = {
+      ...selectedProject,
+      Features: selectedProject.features || [],
+      TechStack: selectedProject.techStack || [],
+      Github:
+        selectedProject.github ||
+        "https://github.com/rashid-flutter",
+      Title: selectedProject.name,
+      Description: selectedProject.description,
+      Img: selectedProject.image,
+      Link: selectedProject.link,
+    };
+
+    setProject(enhancedProject);
+  }
+}, [id]);
 
   if (!project) {
     return (
