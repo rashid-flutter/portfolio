@@ -1,10 +1,10 @@
-import React from "react";
 import {
   Linkedin,
   Github,
   Instagram,
   ExternalLink
 } from "lucide-react";
+import { motion } from "framer-motion";
 
 const socialLinks = [
   {
@@ -37,49 +37,113 @@ const socialLinks = [
   }
 ];
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.12,
+      delayChildren: 0.08,
+    },
+  },
+};
+
+const cardVariants = {
+  hidden: {
+    opacity: 0,
+    y: 22,
+    scale: 0.96,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      duration: 0.65,
+      ease: [0.22, 1, 0.36, 1],
+    },
+  },
+};
+
+const iconVariants = {
+  rest: {
+    rotate: 0,
+    scale: 1,
+  },
+  hover: {
+    rotate: [0, -8, 8, 0],
+    scale: 1.12,
+    transition: {
+      duration: 0.45,
+      ease: "easeOut",
+    },
+  },
+};
+
 const SocialLinks = () => {
   const linkedIn = socialLinks.find(link => link.isPrimary);
   const otherLinks = socialLinks.filter(link => !link.isPrimary);
   const [instagram, github] = otherLinks;
 
   return (
-    <div className="w-full bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-6 py-8 backdrop-blur-xl">
+    <motion.div
+      className="w-full bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-6 py-8 backdrop-blur-xl border border-white/10 shadow-2xl"
+      variants={containerVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.35 }}
+    >
       <h3 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
-        <span className="inline-block w-8 h-1 bg-indigo-500 rounded-full"></span>
+        <motion.span
+          className="inline-block w-8 h-1 bg-indigo-500 rounded-full"
+          initial={{ scaleX: 0 }}
+          whileInView={{ scaleX: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          style={{ transformOrigin: "left" }}
+        />
         Connect With Me
       </h3>
 
-      <div className="flex flex-col gap-4">
+      <motion.div className="flex flex-col gap-4" variants={containerVariants}>
         {/* LinkedIn - Primary Row */}
-        <a
+        <motion.a
           href={linkedIn.url}
           target="_blank"
           rel="noopener noreferrer"
+          aria-label="Open LinkedIn profile"
+          variants={cardVariants}
+          initial="rest"
+          whileHover="hover"
+          whileTap={{ scale: 0.98 }}
           className="group relative flex items-center justify-between p-4 rounded-lg 
                      bg-white/5 border border-white/10 overflow-hidden
-                     hover:border-white/20 transition-all duration-500"
+                     hover:border-white/25 transition-colors duration-500
+                     hover:shadow-lg hover:shadow-[#0A66C2]/10"
+          style={{ willChange: "transform" }}
         >
           {/* Hover Gradient Background */}
           <div 
             className={`absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-500
                        bg-gradient-to-r ${linkedIn.gradient}`}
           />
+          <div className="absolute inset-x-4 bottom-0 h-px scale-x-0 bg-gradient-to-r from-transparent via-white/40 to-transparent transition-transform duration-500 group-hover:scale-x-100" />
           
           {/* Content Container */}
           <div className="relative flex items-center gap-4">
             {/* Icon Container */}
             <div className="relative flex items-center justify-center">
               <div 
-                className="absolute inset-0 opacity-20 rounded-md transition-all duration-500
-                           group-hover:scale-110 group-hover:opacity-30"
+                className="absolute inset-0 opacity-20 rounded-md blur-sm transition-all duration-500
+                           group-hover:scale-125 group-hover:opacity-40"
                 style={{ backgroundColor: linkedIn.color }}
               />
-              <div className="relative p-2 rounded-md">
+              <motion.div className="relative p-2 rounded-md" variants={iconVariants}>
                 <linkedIn.icon
-                  className="w-6 h-6 transition-all duration-500 group-hover:scale-105"
+                  className="w-6 h-6"
                   style={{ color: linkedIn.color }}
                 />
-              </div>
+              </motion.div>
             </div>
 
             {/* Text Container */}
@@ -97,7 +161,7 @@ const SocialLinks = () => {
           <ExternalLink 
             className="relative w-5 h-5 text-gray-500 group-hover:text-white
                        opacity-0 group-hover:opacity-100 transition-all duration-300
-                       transform group-hover:translate-x-0 -translate-x-1"
+                       transform group-hover:translate-x-1 -translate-x-1"
           />
 
           {/* Shine Effect */}
@@ -107,33 +171,41 @@ const SocialLinks = () => {
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent
                           translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
           </div>
-        </a>
+        </motion.a>
 
         {/* Second Row - Instagram & GitHub */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {[instagram, github].map((link) => (
-            <a
+            <motion.a
               key={link.name}
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
+              aria-label={`Open ${link.name} profile`}
+              variants={cardVariants}
+              initial="rest"
+              whileHover="hover"
+              whileTap={{ scale: 0.97 }}
               className="group relative flex items-center gap-3 p-4 rounded-xl 
                          bg-white/5 border border-white/10 overflow-hidden
-                         hover:border-white/20 transition-all duration-500"
+                         hover:border-white/25 transition-colors duration-500
+                         hover:shadow-lg hover:shadow-purple-500/10"
+              style={{ willChange: "transform" }}
             >
               <div className={`absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-500
                                bg-gradient-to-r ${link.gradient}`} />
+              <div className="absolute inset-x-4 bottom-0 h-px scale-x-0 bg-gradient-to-r from-transparent via-white/35 to-transparent transition-transform duration-500 group-hover:scale-x-100" />
               
               <div className="relative flex items-center justify-center">
-                <div className="absolute inset-0 opacity-20 rounded-lg transition-all duration-500
-                                 group-hover:scale-125 group-hover:opacity-30"
+                <div className="absolute inset-0 opacity-20 rounded-lg blur-sm transition-all duration-500
+                                 group-hover:scale-150 group-hover:opacity-40"
                        style={{ backgroundColor: link.color }} />
-                <div className="relative p-2 rounded-lg">
+                <motion.div className="relative p-2 rounded-lg" variants={iconVariants}>
                   <link.icon
-                    className="w-5 h-5 transition-all duration-500 group-hover:scale-110"
+                    className="w-5 h-5"
                     style={{ color: link.color }}
                   />
-                </div>
+                </motion.div>
               </div>
 
               {/* Text Container */}
@@ -148,17 +220,17 @@ const SocialLinks = () => {
               
               <ExternalLink className="w-4 h-4 text-gray-500 group-hover:text-white ml-auto
                                        opacity-0 group-hover:opacity-100 transition-all duration-300
-                                       transform group-hover:translate-x-0 -translate-x-2" />
+                                       transform group-hover:translate-x-1 -translate-x-2" />
 
               <div className="absolute inset-0 opacity-0 group-hover:opacity-100 pointer-events-none overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent
                                 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
               </div>
-            </a>
+            </motion.a>
           ))}
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 

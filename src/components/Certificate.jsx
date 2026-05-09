@@ -14,17 +14,34 @@ const Certificate = ({ ImgSertif }) => {
 		setOpen(false)
 	}
 
+	const handleKeyDown = (event) => {
+		if (event.key === "Enter" || event.key === " ") {
+			event.preventDefault()
+			handleOpen()
+		}
+	}
+
 	return (
 		<Box component="div" sx={{ width: "100%" }}>
 			{/* Thumbnail Container */}
 			<Box
 				className=""
+				role="button"
+				tabIndex={0}
+				aria-label="Open certificate detail"
+				onClick={handleOpen}
+				onKeyDown={handleKeyDown}
 				sx={{
 					position: "relative",
 					overflow: "hidden",
 					borderRadius: 2,
+					cursor: "pointer",
 					boxShadow: "0 8px 16px rgba(0,0,0,0.1)",
 					transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+					outline: "none",
+					"&:focus-visible": {
+						boxShadow: "0 0 0 2px rgba(168,85,247,0.8), 0 12px 24px rgba(0,0,0,0.2)",
+					},
 					"&:hover": {
 						transform: "translateY(-5px)",
 						boxShadow: "0 12px 24px rgba(0,0,0,0.2)",
@@ -67,7 +84,6 @@ const Certificate = ({ ImgSertif }) => {
 							filter: "contrast(1.10) brightness(0.9) saturate(1.1)",
 							transition: "filter 0.3s ease",
 						}}
-						onClick={handleOpen}
 					/>
 				</Box>
 
@@ -82,10 +98,9 @@ const Certificate = ({ ImgSertif }) => {
 						bottom: 0,
 						opacity: 0,
 						transition: "all 0.3s ease",
-						cursor: "pointer",
 						zIndex: 2,
 					}}
-					onClick={handleOpen}>
+				>
 					{/* Hover Content */}
 					<Box
 						className="hover-content"

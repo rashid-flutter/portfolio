@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { db, collection } from "../firebase";
 import { getDocs } from "firebase/firestore";
 import PropTypes from "prop-types";
@@ -10,12 +10,10 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import CardProject from "../components/CardProject";
 import TechStackIcon from "../components/TechStackIcon";
-import AOS from "aos";
-import "aos/dist/aos.css";
 import Certificate from "../components/Certificate";
 import { Code, Award, Boxes } from "lucide-react";
-import projectData from "../project.json";
-import certificateData from "../certificate.json";
+// import projectData from "../project.json";
+// import certificateData from "../certificate.json";
 
 
 // Toggle button component
@@ -109,86 +107,85 @@ export default function FullWidthTabs() {
   const isMobile = window.innerWidth < 768;
   const initialItems = isMobile ? 4 : 6;
 
-  useEffect(() => {
-    AOS.init({ once: false });
-  }, []);
+useEffect(() => {
+  const loadProjects = async () => {
+    try {
+      const response = await fetch("/project.json");
+      const data = await response.json();
 
-  useEffect(() => {
-  setProjects(
-    projectData.projects.map((project, index) => ({
-      id: index,
-      ...project,
+      setProjects(
+        data.projects.map((project, index) => ({
+          id: index,
+          ...project,
 
-      Title: project.name,
-      Description: project.description,
+          Title: project.name,
+          Description: project.description,
 
-      Img: project.image,
+          Img: project.image,
 
-      Github: project.github,
+          Github: project.github,
 
-      Link: project.link,
+          Link: project.link,
 
-      PlayStoreLink: project.playStoreLink,
+          PlayStoreLink: project.playStoreLink,
 
-      AppStoreLink: project.appStoreLink,
+          AppStoreLink: project.appStoreLink,
 
-      Features: project.features || [],
+          Features: project.features || [],
 
-      TechStack: project.techStack || [],
-    }))
-  );
+          TechStack: project.techStack || [],
+        }))
+      );
+    } catch (error) {
+      console.error("Error loading projects:", error);
+    }
+  };
+
+  loadProjects();
 }, []);
-   // CERTIFICATES
 
-  useEffect(() => {
 
-    setCertificates(
-      certificateData.certificates.map(
-        (certificate) => ({
+// CERTIFICATES
+
+useEffect(() => {
+  const loadCertificates = async () => {
+    try {
+      const response = await fetch("/certificate.json");
+      const data = await response.json();
+
+      setCertificates(
+        data.certificates.map((certificate) => ({
           ...certificate,
 
           Title: certificate.name,
 
           Img: certificate.imageUrl,
-        })
-      )
-    );
-
-  }, []);
-
-  const handleChange = (
-    event,
-    newValue
-  ) => {
-    setValue(newValue);
+        }))
+      );
+    } catch (error) {
+      console.error("Error loading certificates:", error);
+    }
   };
 
-  const toggleShowMore = useCallback(
-    (type) => {
+  loadCertificates();
+}, []);
 
-      if (type === "projects") {
+const handleChange = (event, newValue) => {
+  setValue(newValue);
+};
 
-        setShowAllProjects(
-          (prev) => !prev
-        );
-
-      } else {
-
-        setShowAllCertificates(
-          (prev) => !prev
-        );
-
-      }
-
-    },
-    []
-  );
-
+const toggleShowMore = useCallback((type) => {
+  if (type === "projects") {
+    setShowAllProjects((prev) => !prev);
+  } else {
+    setShowAllCertificates((prev) => !prev);
+  }
+}, []);
   const displayedProjects = showAllProjects ? projects : projects.slice(0, initialItems);
   const displayedCertificates = showAllCertificates ? certificates : certificates.slice(0, initialItems);
 
   return (
-    <div className="md:px-[10%] px-[5%] w-full sm:mt-0 mt-[3rem] bg-[#030014] overflow-hidden" id="Projects">
+    <div className="md:px-[10%] px-[5%] w-full sm:mt-0 mt-[3rem] bg-[#030014] overflow-hidden scroll-mt-24" id="Projects">
       <div className="text-center pb-10" data-aos="fade-up" data-aos-duration="1000">
         <h2 className="inline-block text-3xl md:text-5xl font-bold text-center mx-auto text-transparent bg-clip-text bg-gradient-to-r from-[#6366f1] to-[#a855f7]">
           <span style={{

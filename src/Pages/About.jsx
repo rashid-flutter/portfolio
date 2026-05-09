@@ -1,7 +1,7 @@
-import React, { useEffect, memo, useMemo } from "react"
-import { FileText, Code, Award, Globe, ArrowUpRight, Sparkles, UserCheck } from "lucide-react"
-import AOS from 'aos'
-import 'aos/dist/aos.css'
+import { memo, useCallback, useMemo } from "react"
+import { Link } from "react-router-dom"
+import { FileText, Code, Award, Globe, ArrowUpRight, Sparkles } from "lucide-react"
+import { scheduleScrollToSection } from "../utils/sectionScroll"
 
 // Memoized Components
 const Header = memo(() => (
@@ -68,8 +68,16 @@ const ProfileImage = memo(() => (
   </div>
 ));
 
-const StatCard = memo(({ icon: Icon, color, value, label, description, animation }) => (
-  <div data-aos={animation} data-aos-duration={1300} className="relative group">
+const StatCard = memo(({ icon: Icon, color, value, label, description, animation, onNavigate }) => (
+  <Link
+    to="/projects"
+    state={{ scrollTo: "Projects", scrollTick: Date.now() }}
+    onClick={onNavigate}
+    aria-label={`Go to project section from ${label}`}
+    data-aos={animation}
+    data-aos-duration={1300}
+    className="relative group block h-full focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#030014] rounded-2xl"
+  >
     <div className="relative z-10 bg-gray-900/50 backdrop-blur-lg rounded-2xl p-6 border border-white/10 overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl h-full flex flex-col justify-between">
       <div className={`absolute -z-10 inset-0 bg-gradient-to-br ${color} opacity-10 group-hover:opacity-20 transition-opacity duration-300`}></div>
       
@@ -109,10 +117,14 @@ const StatCard = memo(({ icon: Icon, color, value, label, description, animation
         </div>
       </div>
     </div>
-  </div>
+  </Link>
 ));
 
 const AboutPage = () => {
+  const handleProjectsNavigation = useCallback(() => {
+    scheduleScrollToSection("Projects");
+  }, []);
+
   // Memoized calculations
   const { totalProjects, totalCertificates, YearExperience } = useMemo(() => {
     const storedProjects = JSON.parse(localStorage.getItem("projects") || "[]");
@@ -127,30 +139,6 @@ const AboutPage = () => {
       totalProjects: storedProjects.length,
       totalCertificates: storedCertificates.length,
       YearExperience: experience
-    };
-  }, []);
-
-  // Optimized AOS initialization
-  useEffect(() => {
-    const initAOS = () => {
-      AOS.init({
-        once: false, 
-      });
-    };
-
-    initAOS();
-    
-    // Debounced resize handler
-    let resizeTimer;
-    const handleResize = () => {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(initAOS, 250);
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      clearTimeout(resizeTimer);
     };
   }, []);
 
@@ -226,7 +214,12 @@ const AboutPage = () => {
                 <FileText className="w-4 h-4 sm:w-5 sm:h-5" /> Download CV
               </button>
               </a>
-              <a href="#Portofolio" className="w-full lg:w-auto">
+              <Link
+                to="/projects"
+                state={{ scrollTo: "Projects", scrollTick: Date.now() }}
+                onClick={handleProjectsNavigation}
+                className="w-full lg:w-auto"
+              >
               <button 
                 data-aos="fade-up"
                 data-aos-duration="1000"
@@ -234,20 +227,18 @@ const AboutPage = () => {
               >
                 <Code className="w-4 h-4 sm:w-5 sm:h-5" /> View Projects
               </button>
-              </a>
+              </Link>
             </div>
           </div>
 
           <ProfileImage />
         </div>
 
-        <a href="#Portofolio">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16 cursor-pointer">
-            {statsData.map((stat) => (
-              <StatCard key={stat.label} {...stat} />
-            ))}
-          </div>
-        </a>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16 cursor-pointer">
+          {statsData.map((stat) => (
+            <StatCard key={stat.label} {...stat} onNavigate={handleProjectsNavigation} />
+          ))}
+        </div>
       </div>
 
       <style jsx>{`

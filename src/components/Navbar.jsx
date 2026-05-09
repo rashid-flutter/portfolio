@@ -1,21 +1,35 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { Menu, X } from "lucide-react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { scheduleScrollToSection } from "../utils/sectionScroll";
 
 const Navbar = () => {
+    const location = useLocation();
+    const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const [activeSection, setActiveSection] = useState("Home");
     
-    const navItems = [
-        { href: "#Home", label: "Home" },
-        { href: "#About", label: "About" },
-        { href: "#Projects", label: "Projects" },
-        { href: "#Contact", label: "Contact" },
-    ];
+    const lastSyncedPath = useRef(location.pathname);
+
+    const navItems = useMemo(() => [
+        { href: "#Home", path: "/", label: "Home" },
+        { href: "#About", path: "/about", label: "About" },
+        { href: "#Projects", path: "/projects", label: "Projects" },
+        { href: "#Contact", path: "/contact", label: "Contact" },
+    ], []);
 
     useEffect(() => {
         const handleScroll = () => {
             setScrolled(window.scrollY > 20);
+            const isSectionPage = navItems.some((item) => item.path === location.pathname);
+
+            if (!isSectionPage) {
+                const activeRoute = navItems.find((item) => item.path === location.pathname);
+                setActiveSection(activeRoute?.href.replace("#", "") || "Home");
+                return;
+            }
+
             const sections = navItems.map(item => {
                 const section = document.querySelector(item.href);
                 if (section) {
@@ -36,13 +50,31 @@ const Navbar = () => {
 
             if (active) {
                 setActiveSection(active.id);
+
+                if (window.__portfolioProgrammaticScroll) {
+                    return;
+                }
+
+                const activeRoute = navItems.find((item) => item.href === `#${active.id}`);
+                if (!activeRoute || activeRoute.path === lastSyncedPath.current) {
+                    return;
+                }
+
+                lastSyncedPath.current = activeRoute.path;
+                navigate(activeRoute.path, {
+                    replace: true,
+                    state: {
+                        scrollTo: active.id,
+                        fromScrollSpy: true,
+                    },
+                });
             }
         };
 
         window.addEventListener("scroll", handleScroll);
         handleScroll();
         return () => window.removeEventListener("scroll", handleScroll);
-    }, []);
+    }, [location.pathname, navigate, navItems]);
 
     useEffect(() => {
         if (isOpen) {
@@ -52,16 +84,18 @@ const Navbar = () => {
         }
     }, [isOpen]);
 
-    const scrollToSection = (e, href) => {
+    const handleNavClick = (e, item) => {
         e.preventDefault();
-        const section = document.querySelector(href);
-        if (section) {
-            const top = section.offsetTop - 100;
-            window.scrollTo({
-                top: top,
-                behavior: "smooth"
-            });
-        }
+        const sectionId = item.href.replace("#", "");
+
+        navigate(item.path, {
+            state: {
+                scrollTo: sectionId,
+                scrollTick: Date.now(),
+            },
+        });
+        lastSyncedPath.current = item.path;
+        scheduleScrollToSection(sectionId);
         setIsOpen(false);
     };
 
@@ -80,8 +114,8 @@ const Navbar = () => {
                 {/* Logo */}
                 <div className="flex-shrink-0">
                     <a
-                        href="#Home"
-                        onClick={(e) => scrollToSection(e, "#Home")}
+                        href={navItems[0].path}
+                        onClick={(e) => handleNavClick(e, navItems[0])}
                         className="text-xl font-bold bg-gradient-to-r from-[#a855f7] to-[#6366f1] bg-clip-text text-transparent"
                     >
                         Rashid V
@@ -94,8 +128,8 @@ const Navbar = () => {
                         {navItems.map((item) => (
                             <a
                                 key={item.label}
-                                href={item.href}
-                                onClick={(e) => scrollToSection(e, item.href)}
+                                href={item.path}
+                                onClick={(e) => handleNavClick(e, item)}
                                 className="group relative px-1 py-2 text-sm font-medium"
                             >
                                 <span
@@ -151,8 +185,8 @@ const Navbar = () => {
                     {navItems.map((item, index) => (
                         <a
                             key={item.label}
-                            href={item.href}
-                            onClick={(e) => scrollToSection(e, item.href)}
+                            href={item.path}
+                            onClick={(e) => handleNavClick(e, item)}
                             className={`block px-4 py-3 text-lg font-medium transition-all duration-300 ease ${
                                 activeSection === item.href.substring(1)
                                     ? "bg-gradient-to-r from-[#6366f1] to-[#a855f7] bg-clip-text text-transparent font-semibold"

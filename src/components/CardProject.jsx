@@ -1,13 +1,14 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Globe } from 'lucide-react'; // Adding Globe as a default web icon
 
 const CardProject = ({ Img, Title, Description, AppStoreLink, PlayStoreLink, WebLink, id }) => {
+  const navigate = useNavigate();
   // Log WebLink to the console
   console.log("WebLink:", WebLink);
 
   // Handle case when AppStoreLink is empty
   const handleAppStoreClick = (e) => {
+    e.stopPropagation();
     if (!AppStoreLink) {
       console.log("AppStoreLink is empty");
       e.preventDefault();
@@ -17,6 +18,7 @@ const CardProject = ({ Img, Title, Description, AppStoreLink, PlayStoreLink, Web
 
   // Handle case when PlayStoreLink is empty
   const handlePlayStoreClick = (e) => {
+    e.stopPropagation();
     if (!PlayStoreLink) {
       console.log("PlayStoreLink is empty");
       e.preventDefault();
@@ -27,16 +29,43 @@ const CardProject = ({ Img, Title, Description, AppStoreLink, PlayStoreLink, Web
   const handleDetails = (e) => {
     if (!id) {
       console.log("ID is empty");
-      e.preventDefault();
+      e?.preventDefault();
       alert("Project details are not available");
     }
+  };
+
+  const openDetails = () => {
+    if (!id) {
+      alert("Project details are not available");
+      return;
+    }
+
+    navigate(`/project/${id}`);
+  };
+
+  const handleCardKeyDown = (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      openDetails();
+    }
+  };
+
+  const stopCardNavigation = (e) => {
+    e.stopPropagation();
   };
 
   // Determine if we should show the web icon
   const showWebIcon = !AppStoreLink || !PlayStoreLink;
 
   return (
-    <div className="group relative w-full h-full">
+    <div
+      className="group relative w-full h-full cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#030014] rounded-xl"
+      role="button"
+      tabIndex={0}
+      aria-label={`Open details for ${Title}`}
+      onClick={openDetails}
+      onKeyDown={handleCardKeyDown}
+    >
       <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-slate-900/90 to-slate-800/90 backdrop-blur-lg border border-white/10 shadow-2xl transition-all duration-300 hover:shadow-purple-500/20 min-h-[400px] flex flex-col">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-pink-500/10 opacity-50 group-hover:opacity-70 transition-opacity duration-300"></div>
 
@@ -101,10 +130,12 @@ const CardProject = ({ Img, Title, Description, AppStoreLink, PlayStoreLink, Web
               {showWebIcon && (
                 <a
                   href={WebLink} // You can replace this with a default web link if available
-                  onClick={() => console.log(`WebLink clicked: ${WebLink}`)}
+                  onClick={(e) => {
+                    stopCardNavigation(e);
+                    console.log(`WebLink clicked: ${WebLink}`);
+                  }}
 
                   target="_blank"
-                  on
                   rel="noopener noreferrer"
                   className="inline-flex items-center text-gray-400 hover:text-gray-300 transition-colors duration-200"
                 >
@@ -115,14 +146,18 @@ const CardProject = ({ Img, Title, Description, AppStoreLink, PlayStoreLink, Web
 
             {/* Details Link */}
             {id ? (
-              <Link
-                to={`/project/${id}`}
-                onClick={handleDetails}
+              <button
+                type="button"
+                onClick={(e) => {
+                  stopCardNavigation(e);
+                  handleDetails(e);
+                  openDetails();
+                }}
                 className="inline-flex items-center space-x-2 px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-white/90 transition-all duration-200 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-purple-500/50"
               >
                 <span className="text-sm font-medium">Details</span>
                 <ArrowRight className="w-4 h-4" />
-              </Link>
+              </button>
             ) : (
               <span className="text-gray-500 text-sm">Details Not Available</span>
             )}

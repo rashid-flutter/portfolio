@@ -18,6 +18,23 @@ body {
 	overflow-x: hidden;
 	background: #030014;
 	scroll-behavior: smooth !important;
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+#Home,
+#About,
+#Projects,
+#Contact {
+	scroll-margin-top: 6rem;
+}
+
+a,
+button,
+input,
+textarea {
+	-webkit-tap-highlight-color: transparent;
 }
 
 @keyframes blob {
@@ -30,8 +47,22 @@ body {
 	}
 }
 
+@keyframes float {
+	0%,
+	100% {
+		transform: translate3d(0, 0, 0);
+	}
+	50% {
+		transform: translate3d(0, -10px, 0);
+	}
+}
+
 .animate-blob {
 	animation: blob 8s infinite;
+}
+
+.animate-float {
+	animation: float 6s ease-in-out infinite;
 }
 
 .animation-delay-2000 {
@@ -93,6 +124,10 @@ body {
 	will-change: transform, opacity !important;
   }
 
+  [data-aos][data-aos][data-aos-duration] {
+	transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1) !important;
+  }
+
 
 
  @keyframes shine {
@@ -105,6 +140,17 @@ body {
 	 }
 	 .animate-shine {
    animation: shine 1.5s ease-in-out infinite;
+ }
+
+ @media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		scroll-behavior: auto !important;
+		transition-duration: 0.01ms !important;
+	}
  }
 
   
